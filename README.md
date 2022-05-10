@@ -15,3 +15,9 @@ This plugin requires the following:
 4. Ensure the plugin is set to load in the RageHookPlugin (RPH) launch settings. Alternatively, use *LoadPlugin DashCamOverlay.dll* in the RPH Console in-game (F4 by default while RPH is active).
 
 ![Lights On while Siren is Silent](https://raw.githubusercontent.com/Epidurality/GTAVDashCamOverlay/master/OverlayFull.png)
+
+# Support
+Please use the github Issues system to report issues. (https://github.com/Epidurality/GTAVDashCamOverlay)
+
+# Credits
+User CC2020 on the LCPDFR forums who suggested a functional overlay, and to the tens of users and developers of RageHook and RageNativeUI who make these plugins possible and usable.
