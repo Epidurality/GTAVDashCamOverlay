@@ -13,3 +13,5 @@ This plugin requires the following:
 * [GTAV Root Directory]/plugins/DashCamOverlay.dll
 3. Edit the .ini file. Note that positions and scale of the overlay can be configured using an in-game menu. Some aspects are only configurable in the ini.
 4. Ensure the plugin is set to load in the RageHookPlugin (RPH) launch settings. Alternatively, use *LoadPlugin DashCamOverlay.dll* in the RPH Console in-game (F4 by default while RPH is active).
+
+![Lights On while Siren is Silent](https://raw.githubusercontent.com/Epidurality/GTAVDashCamOverlay/master/OverlayFull.png)
