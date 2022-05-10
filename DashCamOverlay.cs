@@ -66,7 +66,7 @@ namespace DashCamOverlay
             menu.AddItems(menuOverlayScale);
 
             // Indicators ini and menu
-            UIMenuCheckboxItem menuShowIndicators = new UIMenuCheckboxItem("Show Indicators", showIndicators, "Show or hide the Lights, Siren, Brake indicator overlays");
+            UIMenuCheckboxItem menuShowIndicators = new UIMenuCheckboxItem("Show Indicators", showIndicators, "Show or hide the Lights, Siren, Brake indicator overlays. NOTE: Lights/Siren show in Police type vehicles only.");
             menuShowIndicators.CheckboxEvent += (sender, newVal) => { showIndicators = newVal; ini.Write("Indicators", "ShowIndicators", showIndicators); };
             menu.AddItems(menuShowIndicators);
 
@@ -147,10 +147,10 @@ namespace DashCamOverlay
                 menuPool.ProcessMenus();
 
                 // DELETE WHEN DONE DEBUGGING
-                if (Game.IsKeyDown(Keys.O))
-                {
-                    break; // Effectively ends the plugin for now during debugging.
-                }
+                //if (Game.IsKeyDown(Keys.O))
+                //{
+                //    break; // Effectively ends the plugin for now during debugging.
+                //}
 
                 // Process menu show/hide
                 if (Game.IsKeyDown(menuKey))
@@ -203,21 +203,24 @@ namespace DashCamOverlay
                     if (showIndicators)
                     {
                         indicators.Caption = "";
-                        if (vehicle.IsSirenOn)
+                        if (vehicle.IsPoliceVehicle)
                         {
-                            indicators.Caption += "~g~[LIGHTS] ";
-                            if (vehicle.IsSirenSilent)
+                            if (vehicle.IsSirenOn)
                             {
-                                indicators.Caption += "~w~[SIREN]";
+                                indicators.Caption += "~g~[LIGHTS] ";
+                                if (vehicle.IsSirenSilent)
+                                {
+                                    indicators.Caption += "~w~[SIREN]";
+                                }
+                                else
+                                {
+                                    indicators.Caption += "~g~[SIREN]";
+                                }
                             }
                             else
                             {
-                                indicators.Caption += "~g~[SIREN]";
+                                indicators.Caption += "~w~[LIGHTS] [SIREN]";
                             }
-                        }
-                        else
-                        {
-                            indicators.Caption += "~w~[LIGHTS] [SIREN]";
                         }
                         if (showBrakes)
                         {
