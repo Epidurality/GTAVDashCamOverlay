@@ -33,8 +33,9 @@ namespace DashCamOverlay
             Common.EFont fontType = Common.EFont.ChaletLondon;
             Keys menuKey = (Keys)kc.ConvertFromString(ini.ReadString("DashCamOverlay", "MenuKey", "I"));
 
-            bool showIndicators = ini.ReadBoolean("Indicators", "ShowIndicators", true);
-            bool showBrakes = ini.ReadBoolean("Indicators", "ShowBrakes", true);
+            bool showBrakesIndicator = ini.ReadBoolean("Indicators", "ShowBrakesIndicator", true);
+            bool showLightsIndicator = ini.ReadBoolean("Indicators", "ShowLightsIndicator", true);
+            bool showSirenIndicator = ini.ReadBoolean("Indicators", "ShowSirenIndicator", true);
             int indicatorsX = ini.ReadInt16("Indicators", "IndicatorsX", 960);
             int indicatorsY = ini.ReadInt16("Indicators", "IndicatorsY", 1035);
 
@@ -44,7 +45,7 @@ namespace DashCamOverlay
             bool speedMetric = ini.ReadBoolean("Speed", "SpeedMetric", false);
 
             bool showTimestamp = ini.ReadBoolean("Timestamp", "ShowTimestamp", true);
-            string timestampFormat = ini.ReadString("Timestamp", "TimestampDateFormat", "yyyy/dd/MM hh:mm:ss:ff");
+            string timestampFormat = ini.ReadString("Timestamp", "TimestampFormat", "yyyy/dd/MM hh:mm:ss:ff");
             int timestampX = ini.ReadInt16("Timestamp", "TimestampX", 960);
             int timestampY = ini.ReadInt16("Timestamp", "TimestampY", 25);
 
@@ -66,13 +67,17 @@ namespace DashCamOverlay
             menu.AddItems(menuOverlayScale);
 
             // Indicators ini and menu
-            UIMenuCheckboxItem menuShowIndicators = new UIMenuCheckboxItem("Show Indicators", showIndicators, "Show or hide the Lights, Siren, Brake indicator overlays. NOTE: Lights/Siren show in Police type vehicles only.");
-            menuShowIndicators.CheckboxEvent += (sender, newVal) => { showIndicators = newVal; ini.Write("Indicators", "ShowIndicators", showIndicators); };
-            menu.AddItems(menuShowIndicators);
+            UIMenuCheckboxItem menuShowBrakesIndicator = new UIMenuCheckboxItem("Show Brakes Indicator", showBrakesIndicator, "Show or hide specifically the BRAKES indicator overlay");
+            menuShowBrakesIndicator.CheckboxEvent += (sender, newVal) => { showBrakesIndicator = newVal; ini.Write("Indicators", "ShowBrakesIndicator", newVal); };
+            menu.AddItems(menuShowBrakesIndicator);
+            
+            UIMenuCheckboxItem menuShowLightsIndicator = new UIMenuCheckboxItem("Show Lights Indicator", showLightsIndicator, "Show or hide specifically the LIGHTS indicator overlay");
+            menuShowLightsIndicator.CheckboxEvent += (sender, newVal) => { showLightsIndicator = newVal; ini.Write("Indicators", "ShowLightsIndicator", newVal); };
+            menu.AddItems(menuShowLightsIndicator);
 
-            UIMenuCheckboxItem menuShowBrakes = new UIMenuCheckboxItem("Show Brakes", showBrakes, "Show or hide specifically the BRAKES indicator overlay");
-            menuShowBrakes.CheckboxEvent += (sender, newVal) => { showBrakes = newVal; ini.Write("Indicators", "ShowBrakes", newVal); };
-            menu.AddItems(menuShowBrakes);
+            UIMenuCheckboxItem menuShowSirenIndicator = new UIMenuCheckboxItem("Show Siren Indicator", showLightsIndicator, "Show or hide specifically the Siren indicator overlay");
+            menuShowSirenIndicator.CheckboxEvent += (sender, newVal) => { showSirenIndicator = newVal; ini.Write("Indicators", "ShowSirenIndicator", newVal); };
+            menu.AddItems(menuShowSirenIndicator);
 
             UIMenuNumericScrollerItem<int> menuIndicatorsX = new UIMenuNumericScrollerItem<int>("Indicators X Position", "Horizontal position of the LIGHTS/BRAKES/SIREN indicators overlay", 0, 1920, 1) { Value = indicatorsX };
             menuIndicatorsX.IndexChanged += (sender, oldVal, newVal) => { indicatorsX = newVal; ini.Write("Indicators", "IndicatorsX", indicatorsX); RedrawOverlay(); };
@@ -173,7 +178,7 @@ namespace DashCamOverlay
                 }
 
                 // Perform overlay functions
-                if (Game.LocalPlayer.Character.IsInAnyVehicle(true))
+                if (Game.LocalPlayer.Character.IsInAnyVehicle(false))
                 {
                     vehicle = Game.LocalPlayer.Character.CurrentVehicle;
                     // Perform updates that don't need to be done each tick
@@ -200,42 +205,45 @@ namespace DashCamOverlay
                     }
 
                     // Perform updates and draws every tick
-                    if (showIndicators)
+                    indicators.Caption = "";
+                    if (vehicle.IsPoliceVehicle)
                     {
-                        indicators.Caption = "";
-                        if (vehicle.IsPoliceVehicle)
+                        if (showLightsIndicator)
                         {
                             if (vehicle.IsSirenOn)
                             {
                                 indicators.Caption += "~g~[LIGHTS] ";
-                                if (vehicle.IsSirenSilent)
-                                {
-                                    indicators.Caption += "~w~[SIREN]";
-                                }
-                                else
-                                {
-                                    indicators.Caption += "~g~[SIREN]";
-                                }
                             }
                             else
                             {
-                                indicators.Caption += "~w~[LIGHTS] [SIREN]";
+                                indicators.Caption += "~w~[LIGHTS] ";
                             }
                         }
-                        if (showBrakes)
+                        if (showSirenIndicator)
                         {
-                            if (Game.IsControlPressed(0, GameControl.VehicleBrake))
+                            if (vehicle.IsSirenSilent)
                             {
-                                indicators.Caption += " ~g~[BRAKES]";
+                                indicators.Caption += "~w~[SIREN] ";
                             }
                             else
                             {
-                                indicators.Caption += " ~w~[BRAKES]";
+                                indicators.Caption += "~g~[SIREN] ";
                             }
                         }
-                        indicators.Draw();
                     }
-
+                    if (showBrakesIndicator)
+                    {
+                        if (Game.IsControlPressed(0, GameControl.VehicleBrake))
+                        {
+                            indicators.Caption += "~g~[BRAKES]";
+                        }
+                        else
+                        {
+                            indicators.Caption += "~w~[BRAKES]";
+                        }
+                    }
+                    
+                    indicators.Draw();
                     if (showSpeed) speed.Draw();
                     if (showTimestamp) timestamp.Draw();
                     if (showCoordinates) coordinates.Draw();
