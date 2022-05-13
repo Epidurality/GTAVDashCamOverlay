@@ -16,6 +16,10 @@ This plugin requires the following:
 
 ![Lights On while Siren is Silent](https://raw.githubusercontent.com/Epidurality/GTAVDashCamOverlay/master/OverlayFull.png)
 
+# Known Issues
+* [BRAKES] indicator isn't perfect. Could not find reliable way of matching this with your tailights. Even checking for if the BRAKE button is being pressed apparently isn't consistent.
+* [SIREN] does not work correctly with ELS. ELS overrides the default Siren toggling and I don't know how to hook into it. For now, just toggle the SIREN indicator in the ini/menu to hide it.
+
 # Support
 Please use the github Issues system to report issues. (https://github.com/Epidurality/GTAVDashCamOverlay)
 
